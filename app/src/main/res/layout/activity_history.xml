@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="strecha.com.diceroller_3d.HistoryActivity">
+    tools:context="strecha.com.diceroller_3d.HistoryActivity"
+    android:background="@drawable/background">
 
 </android.support.constraint.ConstraintLayout>
