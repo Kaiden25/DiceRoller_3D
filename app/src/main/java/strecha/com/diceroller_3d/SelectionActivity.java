@@ -1,13 +1,77 @@
 package strecha.com.diceroller_3d;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.GridLayout;
+import android.widget.TextView;
+
+import strecha.com.diceroller_3d.module.DiceType;
 
 public class SelectionActivity extends AppCompatActivity {
+
+    private GridLayout grid;
+    private String diceType;
+    private int numberOfDices;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selection);
+
+        intent = new Intent(this, RollActivity.class);
+        grid = (GridLayout) findViewById(R.id.grid);
+
+        for (DiceType d : DiceType.values()) {
+            Button b = new Button(this);
+            b.setText(d.toString());
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onDiceTypeButtonClick(v);
+                }
+            });
+
+            assert grid != null;
+            grid.addView(b);
+        }
+    }
+
+    public void onDiceTypeButtonClick(View view) {
+        Button b = (Button) view;
+        diceType = b.getText().toString();
+        grid.removeAllViews();
+
+        EditText editText = new EditText(this);
+        editText.setHint(R.string.diceNumberSettingText);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (
+                    actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    actionId == EditorInfo.IME_ACTION_DONE ||
+                    event.getAction() == KeyEvent.ACTION_DOWN &&
+                    event.getKeyCode() == KeyEvent.KEYCODE_ENTER
+                ){
+
+                    numberOfDices = Integer.valueOf(v.getText().toString());
+                    intent.putExtra(RollActivity.EXTRA_DICE_TYPE, diceType);
+                    intent.putExtra(RollActivity.EXTRA_DICE_NUMBER, numberOfDices);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
+            }
+        });
+        grid.addView(editText);
     }
 }
+

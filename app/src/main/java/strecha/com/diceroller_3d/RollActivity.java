@@ -11,8 +11,8 @@ import strecha.com.diceroller_3d.module.DiceType;
 
 public class RollActivity extends AppCompatActivity {
 
-    private static final String EXTRA_DICE_TYPE = "strecha.com.diceroller_3d.RollActivity.DiceType";
-    private static final String EXTRA_DICE_NUMBER = "strecha.com.diceroller_3d.RollActivity.DiceNumber";
+    public static final String EXTRA_DICE_TYPE = "strecha.com.diceroller_3d.RollActivity.DiceType";
+    public static final String EXTRA_DICE_NUMBER = "strecha.com.diceroller_3d.RollActivity.DiceNumber";
 
     private DiceType diceType = DiceType.D4;
     private int diceNumber = 1;

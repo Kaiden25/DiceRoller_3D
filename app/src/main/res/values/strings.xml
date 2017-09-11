@@ -3,4 +3,5 @@
     <string name="butSelectionText">Selection</string>
     <string name="butHistoryText">History</string>
     <string name="butSettingsText">Settings</string>
+    <string name="diceNumberSettingText">Number of dices</string>
 </resources>
