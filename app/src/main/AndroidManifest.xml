@@ -17,7 +17,7 @@
         </activity>
         <activity android:name=".SelectionActivity" />
         <activity android:name=".SettingsActivity" />
-        <activity android:name=".HistoryActivity"></activity>
+        <activity android:name=".HistoryActivity" />
     </application>
 
 </manifest>
