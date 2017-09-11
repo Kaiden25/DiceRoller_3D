@@ -29,6 +29,7 @@ public class SelectionActivity extends AppCompatActivity {
         intent = new Intent(this, RollActivity.class);
         grid = (GridLayout) findViewById(R.id.grid);
 
+        // create buttons for all diceType options and add them to grid
         for (DiceType d : DiceType.values()) {
             Button b = new Button(this);
             b.setText(d.toString());
@@ -44,14 +45,19 @@ public class SelectionActivity extends AppCompatActivity {
         }
     }
 
+    // onClick listener for diceType buttons
     public void onDiceTypeButtonClick(View view) {
+        // get text of triggered button and remove all buttons from grid
         Button b = (Button) view;
         diceType = b.getText().toString();
         grid.removeAllViews();
 
+        // create editText to get diceNumber and add it to grid
         EditText editText = new EditText(this);
         editText.setHint(R.string.diceNumberSettingText);
         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        //set listener to detect end of number input
         editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
