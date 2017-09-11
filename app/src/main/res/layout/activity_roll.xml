@@ -7,25 +7,12 @@
     tools:context="strecha.com.diceroller_3d.RollActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="495dp"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="0dp"
-        android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="parent">
-
-        <Button
-            android:id="@+id/butHistory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:text="@string/butHistoryText"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/butSelection"
@@ -34,6 +21,7 @@
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:text="@string/butSelectionText"
+            android:onClick="onMenuButtonClick"
             app:layout_constraintRight_toLeftOf="@+id/butSettings"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,7 +32,19 @@
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:text="@string/butSettingsText"
+            android:onClick="onMenuButtonClick"
             app:layout_constraintRight_toLeftOf="@+id/butHistory"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/butHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:text="@string/butHistoryText"
+            android:onClick="onMenuButtonClick"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
