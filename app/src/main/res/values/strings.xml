@@ -3,4 +3,8 @@
     <string name="butSelectionText">Selection</string>
     <string name="butHistoryText">History</string>
     <string name="butSettingsText">Settings</string>
+    <string name="soundSetting">Sound on</string>
+    <string name="diceDisplaySetting">3D</string>
+    <string name="on">on</string>
+    <string name="off">off</string>
 </resources>
