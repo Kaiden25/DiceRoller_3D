@@ -9,4 +9,7 @@
     <string name="on">on</string>
     <string name="off">off</string>
     <string name="saveSettingsButtonText">Save</string>
+    <string name="selectionActivityLabel">Selection</string>
+    <string name="settingsActivityLabel">Settings</string>
+    <string name="historyActivityLabel">History</string>
 </resources>

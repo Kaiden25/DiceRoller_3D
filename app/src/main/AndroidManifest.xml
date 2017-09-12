@@ -15,9 +15,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SelectionActivity" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".HistoryActivity" />
+
+        <activity
+            android:name=".SelectionActivity"
+            android:label="@string/selectionActivityLabel"
+            android:parentActivityName=".RollActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".RollActivity"/>
+        </activity>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settingsActivityLabel"
+            android:parentActivityName=".RollActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".RollActivity"/>
+        </activity>
+
+        <activity
+            android:name=".HistoryActivity"
+            android:label="@string/historyActivityLabel"
+            android:parentActivityName=".RollActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".RollActivity"/>
+        </activity>
+
     </application>
 
 </manifest>
