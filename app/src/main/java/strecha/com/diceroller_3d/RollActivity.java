@@ -48,7 +48,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     private final Random randomGen = new Random();
     @SuppressWarnings("unused")
     private int diceSum;
-    private int roll[] = new int[diceNumber];
+    private int roll[];
     private SparseArray<ImageView> diceImageViewArray;
     private SensorManager sensorMgr;
     private Handler animationHandler;
@@ -118,6 +118,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
             }
         }
 
+        roll = new int[diceNumber];
         String[] s = diceType.toString().split("D");
         numberOfDiceSites = Integer.parseInt(s[1]);
         dice = new Drawable[numberOfDiceSites];
@@ -172,7 +173,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     private void doRoll() { // only does a single roll
 
         for (int i = 0; i < diceNumber; i++){
-            roll[i] = randomGen.nextInt(6);
+            roll[i] = randomGen.nextInt(numberOfDiceSites);
             history.add(roll[i]);
         }
 
