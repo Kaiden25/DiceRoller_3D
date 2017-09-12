@@ -25,9 +25,11 @@ import strecha.com.diceroller_3d.module.DiceType;
 
 public class RollActivity extends AppCompatActivity implements SensorEventListener {
 
+    //Identifiers for extras in intents
     public static final String EXTRA_DICE_TYPE = "strecha.com.diceroller_3d.RollActivity.DiceType";
     public static final String EXTRA_DICE_NUMBER = "strecha.com.diceroller_3d.RollActivity.DiceNumber";
 
+    //diceType and diceNumber initialized with Default Values
     private DiceType diceType = DiceType.D4;
     private int diceNumber = 10;
 
@@ -60,6 +62,8 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     private static final int SHAKE_THRESHOLD = 800;
 
     /** Called when the activity is first created. */
+    //TODO: store rolled numbers
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         paused = false;
@@ -67,6 +71,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_roll);
         res = getResources();
 
+        // check for intent extra values
         Intent intent = getIntent();
 
         if (intent.hasExtra(EXTRA_DICE_TYPE)){
@@ -199,6 +204,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    // onClick listener for menu buttons selection, settings and history
     public void onMenuButtonClick(View v){
         Intent intent = null;
         if (v.getId() == R.id.butSelection){
@@ -215,4 +221,6 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
             startActivity(intent);
         }
     }
+
+    //TODO: implement roll logic, roll animation and acceleration event
 }
