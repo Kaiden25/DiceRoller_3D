@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Random;
@@ -83,7 +84,20 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         }
 
         if (intent.hasExtra(EXTRA_DICE_NUMBER)){
-            diceNumber = intent.getIntExtra(EXTRA_DICE_NUMBER, 1);
+            int nbr = intent.getIntExtra(EXTRA_DICE_NUMBER, 1);
+            if (nbr > 9) {
+                diceNumber = 9;
+                Toast toast = Toast.makeText(this, "Maximum of dices is 9", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+            else if (nbr < 1){
+                diceNumber = 1;
+                Toast toast = Toast.makeText(this, "Minimum of dices is 1", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+            else{
+                diceNumber = nbr;
+            }
         }
 
         SettingsFileHandler sfh = new SettingsFileHandler(this);
@@ -93,9 +107,6 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         else {
             settings = sfh.createDefaultSettings();
         }
-
-        System.out.println("3d: " + settings.is3dEnabled());
-        System.out.println("sound: " + settings.isSoundEnabled());
 
         for (int i = 0; i < 6; i++) {
             dice[i] = res.getDrawable(diceImages[i]);
@@ -239,6 +250,4 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
             startActivity(intent);
         }
     }
-
-    //TODO: implement roll logic, roll animation and acceleration event
 }
