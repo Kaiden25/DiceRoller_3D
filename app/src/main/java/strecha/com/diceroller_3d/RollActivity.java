@@ -56,7 +56,6 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     private ImageView die7;
     private ImageView die8;
     private ImageView die9;
-    private LinearLayout diceContainer;
     private SensorManager sensorMgr;
     private Handler animationHandler;
     private long lastUpdate = -1;
@@ -115,17 +114,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         for (int i = 0; i < 6; i++) {
             dice[i] = res.getDrawable(diceImagesMap.get(diceType)[i]);
         }
-        diceContainer = (LinearLayout) findViewById(R.id.diceContainer);
-        diceContainer = (LinearLayout) findViewById(R.id.diceContainer1);
-        diceContainer = (LinearLayout) findViewById(R.id.diceContainer2);
-        diceContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    rollDice();
-                } catch (Exception e) {}
-            }
-        });
+
         die1 = (ImageView) findViewById(R.id.die1);
         die2 = (ImageView) findViewById(R.id.die2);
         die3 = (ImageView) findViewById(R.id.die3);
@@ -250,5 +239,9 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         if (intent != null) {
             startActivity(intent);
         }
+    }
+
+    public void onDiceLinearLayoutClick(View v){
+        rollDice();
     }
 }
