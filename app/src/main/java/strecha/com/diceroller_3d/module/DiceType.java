@@ -1,7 +1,5 @@
 package strecha.com.diceroller_3d.module;
 
-import android.renderscript.Double4;
-
 /**
  * Created by admin on 11.09.2017.
  */
