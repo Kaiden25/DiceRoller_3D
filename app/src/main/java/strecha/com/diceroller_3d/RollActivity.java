@@ -59,7 +59,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     private float last_x, last_y, last_z;
     private boolean paused = false;
     private static final int UPDATE_DELAY = 50;
-    private static final int SHAKE_THRESHOLD = 800;
+    private static final double SHAKE_THRESHOLD = 5000;
 
     /** Called when the activity is first created. */
     //TODO: store rolled numbers
@@ -93,7 +93,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
             public void onClick(View v) {
                 try {
                     rollDice();
-                } catch (Exception e) {};
+                } catch (Exception e) {}
             }
         });
         die1 = (ImageView) findViewById(R.id.die1);
@@ -120,7 +120,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         };
         sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
         boolean accelSupported = sensorMgr.registerListener((SensorEventListener) this,
-                sensorMgr.getDefaultSensor(SensorManager.SENSOR_ACCELEROMETER),	SensorManager.SENSOR_DELAY_GAME);
+                sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),	SensorManager.SENSOR_DELAY_GAME);
         if (!accelSupported) sensorMgr.unregisterListener((SensorEventListener) this); //no accelerometer on the device
         rollDice();
     }
@@ -179,15 +179,16 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        Sensor mySensor = event.sensor;
-        if (mySensor.getType() == SensorManager.SENSOR_ACCELEROMETER) {
+        //sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
+        //Sensor mySensor = sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             long curTime = System.currentTimeMillis();
             if ((curTime - lastUpdate) > UPDATE_DELAY) {
                 long diffTime = (curTime - lastUpdate);
                 lastUpdate = curTime;
-                x = event.values[SensorManager.DATA_X];
-                y = event.values[SensorManager.DATA_Y];
-                z = event.values[SensorManager.DATA_Z];
+                x = event.values[0];
+                y = event.values[1];
+                z = event.values[2];
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                 if (speed > SHAKE_THRESHOLD) { //the screen was shaked
                     rollDice();
