@@ -8,13 +8,13 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -31,10 +31,12 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     //Identifiers for extras in intents
     public static final String EXTRA_DICE_TYPE = "strecha.com.diceroller_3d.RollActivity.DiceType";
     public static final String EXTRA_DICE_NUMBER = "strecha.com.diceroller_3d.RollActivity.DiceNumber";
+    public static final String EXTRA_HISTORY = "strecha.com.diceroller_3d.RollActivity.History";
 
     //diceType and diceNumber initialized with Default Values
     private DiceType diceType = DiceType.D6;
-    private int diceNumber = 10;
+    private int numberOfDiceSites;
+    private int diceNumber = 9;
     private Settings settings;
     private ArrayList<Integer> history;
 
@@ -42,20 +44,12 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     private final int delayTime = 15;
     private Resources res;
     private HashMap<DiceType, int[]> diceImagesMap;
-    private Drawable dice[] = new Drawable[6];
+    private Drawable dice[];
     private final Random randomGen = new Random();
     @SuppressWarnings("unused")
     private int diceSum;
     private int roll[] = new int[diceNumber];
-    private ImageView die1;
-    private ImageView die2;
-    private ImageView die3;
-    private ImageView die4;
-    private ImageView die5;
-    private ImageView die6;
-    private ImageView die7;
-    private ImageView die8;
-    private ImageView die9;
+    private SparseArray<ImageView> diceImageViewArray;
     private SensorManager sensorMgr;
     private Handler animationHandler;
     private long lastUpdate = -1;
@@ -75,6 +69,21 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_roll);
         res = getResources();
         history = new ArrayList<>();
+        diceImageViewArray = new SparseArray<>();
+        diceImageViewArray.put(0, (ImageView) findViewById(R.id.die1));
+        diceImageViewArray.put(1, (ImageView) findViewById(R.id.die2));
+        diceImageViewArray.put(2, (ImageView) findViewById(R.id.die3));
+        diceImageViewArray.put(3, (ImageView) findViewById(R.id.die4));
+        diceImageViewArray.put(4, (ImageView) findViewById(R.id.die5));
+        diceImageViewArray.put(5, (ImageView) findViewById(R.id.die6));
+        diceImageViewArray.put(6, (ImageView) findViewById(R.id.die7));
+        diceImageViewArray.put(7, (ImageView) findViewById(R.id.die8));
+        diceImageViewArray.put(8, (ImageView) findViewById(R.id.die9));
+
+        for (int i = 0; i < diceImageViewArray.size(); i++){
+            diceImageViewArray.get(i).setImageDrawable(null);
+        }
+
         diceImagesMap = new HashMap<>();
         diceImagesMap.put(DiceType.D6, new int[] { R.drawable.d6_1, R.drawable.d6_2, R.drawable.d6_3, R.drawable.d6_4, R.drawable.d6_5, R.drawable.d6_6 });
 
@@ -93,15 +102,19 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
                 Toast toast = Toast.makeText(this, "Maximum of dices is 9", Toast.LENGTH_SHORT);
                 toast.show();
             }
-            else if (nbr < 1){
+            else if (nbr < 0){
                 diceNumber = 1;
-                Toast toast = Toast.makeText(this, "Minimum of dices is 1", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(this, "Minimum of dices is 0", Toast.LENGTH_SHORT);
                 toast.show();
             }
             else{
                 diceNumber = nbr;
             }
         }
+
+        String[] s = diceType.toString().split("D");
+        numberOfDiceSites = Integer.parseInt(s[1]);
+        dice = new Drawable[numberOfDiceSites];
 
         SettingsFileHandler sfh = new SettingsFileHandler(this);
         if (sfh.hasSettingsFile()){
@@ -111,30 +124,15 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
             settings = sfh.createDefaultSettings();
         }
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < numberOfDiceSites; i++) {
             dice[i] = res.getDrawable(diceImagesMap.get(diceType)[i]);
         }
 
-        die1 = (ImageView) findViewById(R.id.die1);
-        die2 = (ImageView) findViewById(R.id.die2);
-        die3 = (ImageView) findViewById(R.id.die3);
-        die4 = (ImageView) findViewById(R.id.die4);
-        die5 = (ImageView) findViewById(R.id.die5);
-        die6 = (ImageView) findViewById(R.id.die6);
-        die7 = (ImageView) findViewById(R.id.die7);
-        die8 = (ImageView) findViewById(R.id.die8);
-        die9 = (ImageView) findViewById(R.id.die9);
         animationHandler = new Handler() {
             public void handleMessage(Message msg) {
-                die1.setImageDrawable(dice[roll[0]]);
-                die2.setImageDrawable(dice[roll[1]]);
-                die3.setImageDrawable(dice[roll[2]]);
-                die4.setImageDrawable(dice[roll[3]]);
-                die5.setImageDrawable(dice[roll[4]]);
-                die6.setImageDrawable(dice[roll[5]]);
-                die7.setImageDrawable(dice[roll[6]]);
-                die8.setImageDrawable(dice[roll[7]]);
-                die9.setImageDrawable(dice[roll[8]]);
+                for (int i = 0; i < diceNumber; i++){
+                    diceImageViewArray.get(i).setImageDrawable(dice[roll[i]]);
+                }
             }
         };
         sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -234,6 +232,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         }
         else if (v.getId() == R.id.butHistory){
             intent = new Intent(this, HistoryActivity.class);
+            intent.putExtra(EXTRA_HISTORY, history);
         }
 
         if (intent != null) {
