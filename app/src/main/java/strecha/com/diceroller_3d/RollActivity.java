@@ -12,14 +12,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Selection;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import strecha.com.diceroller_3d.module.DiceType;
@@ -33,14 +33,15 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     public static final String EXTRA_DICE_NUMBER = "strecha.com.diceroller_3d.RollActivity.DiceNumber";
 
     //diceType and diceNumber initialized with Default Values
-    private DiceType diceType = DiceType.D4;
+    private DiceType diceType = DiceType.D6;
     private int diceNumber = 10;
     private Settings settings;
+    private ArrayList<Integer> history;
 
     private final int rollAnimations = 50;
     private final int delayTime = 15;
     private Resources res;
-    private final int[] diceImages = new int[] { R.drawable.d6_1, R.drawable.d6_2, R.drawable.d6_3, R.drawable.d6_4, R.drawable.d6_5, R.drawable.d6_6 };
+    private HashMap<DiceType, int[]> diceImagesMap;
     private Drawable dice[] = new Drawable[6];
     private final Random randomGen = new Random();
     @SuppressWarnings("unused")
@@ -74,6 +75,9 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roll);
         res = getResources();
+        history = new ArrayList<>();
+        diceImagesMap = new HashMap<>();
+        diceImagesMap.put(DiceType.D6, new int[] { R.drawable.d6_1, R.drawable.d6_2, R.drawable.d6_3, R.drawable.d6_4, R.drawable.d6_5, R.drawable.d6_6 });
 
         // check for intent extra values
         Intent intent = getIntent();
@@ -109,7 +113,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         }
 
         for (int i = 0; i < 6; i++) {
-            dice[i] = res.getDrawable(diceImages[i]);
+            dice[i] = res.getDrawable(diceImagesMap.get(diceType)[i]);
         }
         diceContainer = (LinearLayout) findViewById(R.id.diceContainer);
         diceContainer = (LinearLayout) findViewById(R.id.diceContainer1);
@@ -173,15 +177,12 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void doRoll() { // only does a single roll
-        roll[0] = randomGen.nextInt(6);
-        roll[1] = randomGen.nextInt(6);
-        roll[2] = randomGen.nextInt(6);
-        roll[3] = randomGen.nextInt(6);
-        roll[4] = randomGen.nextInt(6);
-        roll[5] = randomGen.nextInt(6);
-        roll[6] = randomGen.nextInt(6);
-        roll[7] = randomGen.nextInt(6);
-        roll[8] = randomGen.nextInt(6);
+
+        for (int i = 0; i < diceNumber; i++){
+            roll[i] = randomGen.nextInt(6);
+            history.add(roll[i]);
+        }
+
         //diceSum = roll[0] + roll[1] + 2; // 2 is added because the values of the rolls start with 0 not 1
         synchronized (getLayoutInflater()) {
             animationHandler.sendEmptyMessage(0);
