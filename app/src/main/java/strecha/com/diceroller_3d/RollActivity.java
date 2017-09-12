@@ -60,7 +60,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     private static final double SHAKE_THRESHOLD = 5000;
 
     /** Called when the activity is first created. */
-    //TODO: store rolled numbers
+    //TODO: store important variables not in activity(search for application storage)
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
