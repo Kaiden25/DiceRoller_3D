@@ -168,13 +168,16 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
             e.printStackTrace();
         }
         mp.start();
+
+        for (int i = 0; i < roll.length; i++){
+            history.add(roll[i]);
+        }
     }
 
     private void doRoll() { // only does a single roll
 
         for (int i = 0; i < diceNumber; i++){
             roll[i] = randomGen.nextInt(numberOfDiceSites);
-            history.add(roll[i]);
         }
 
         //diceSum = roll[0] + roll[1] + 2; // 2 is added because the values of the rolls start with 0 not 1
