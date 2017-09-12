@@ -8,4 +8,5 @@
     <string name="diceDisplaySetting">3D</string>
     <string name="on">on</string>
     <string name="off">off</string>
+    <string name="saveSettingsButtonText">Save</string>
 </resources>
