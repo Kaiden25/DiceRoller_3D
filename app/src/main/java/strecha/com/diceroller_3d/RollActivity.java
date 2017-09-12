@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.Random;
 
 import strecha.com.diceroller_3d.module.DiceType;
+import strecha.com.diceroller_3d.module.Settings;
+import strecha.com.diceroller_3d.module.SettingsFileHandler;
 
 public class RollActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -32,6 +34,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     //diceType and diceNumber initialized with Default Values
     private DiceType diceType = DiceType.D4;
     private int diceNumber = 10;
+    private Settings settings;
 
     private final int rollAnimations = 50;
     private final int delayTime = 15;
@@ -82,6 +85,18 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         if (intent.hasExtra(EXTRA_DICE_NUMBER)){
             diceNumber = intent.getIntExtra(EXTRA_DICE_NUMBER, 1);
         }
+
+        SettingsFileHandler sfh = new SettingsFileHandler(this);
+        if (sfh.hasSettingsFile()){
+            settings = sfh.readSettings();
+        }
+        else {
+            settings = sfh.createDefaultSettings();
+        }
+
+        System.out.println("3d: " + settings.is3dEnabled());
+        System.out.println("sound: " + settings.isSoundEnabled());
+
         for (int i = 0; i < 6; i++) {
             dice[i] = res.getDrawable(diceImages[i]);
         }
@@ -212,6 +227,8 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         }
         else if (v.getId() == R.id.butSettings){
             intent = new Intent(this, SettingsActivity.class);
+            intent.putExtra(SettingsActivity.EXTRA_SETTINGS_SOUND, settings.isSoundEnabled());
+            intent.putExtra(SettingsActivity.EXTRA_SETTINGS_3D, settings.is3dEnabled());
         }
         else if (v.getId() == R.id.butHistory){
             intent = new Intent(this, HistoryActivity.class);
