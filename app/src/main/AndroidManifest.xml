@@ -8,7 +8,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RollActivity">
+        <activity
+            android:name=".RollActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,7 +22,9 @@
         <activity
             android:name=".SelectionActivity"
             android:label="@string/selectionActivityLabel"
-            android:parentActivityName=".RollActivity">
+            android:parentActivityName=".RollActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RollActivity"/>
@@ -28,7 +33,9 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/settingsActivityLabel"
-            android:parentActivityName=".RollActivity">
+            android:parentActivityName=".RollActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RollActivity"/>
@@ -37,7 +44,9 @@
         <activity
             android:name=".HistoryActivity"
             android:label="@string/historyActivityLabel"
-            android:parentActivityName=".RollActivity">
+            android:parentActivityName=".RollActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RollActivity"/>
