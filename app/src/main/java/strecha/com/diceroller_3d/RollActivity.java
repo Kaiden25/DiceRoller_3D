@@ -17,8 +17,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -28,10 +26,6 @@ import strecha.com.diceroller_3d.module.Settings;
 import strecha.com.diceroller_3d.module.SettingsFileHandler;
 
 public class RollActivity extends AppCompatActivity implements SensorEventListener {
-
-    //Identifiers for extras in intents
-    public static final String EXTRA_DICE_TYPE = "strecha.com.diceroller_3d.RollActivity.DiceType";
-    public static final String EXTRA_DICE_NUMBER = "strecha.com.diceroller_3d.RollActivity.DiceNumber";
 
     //diceType and diceNumber initialized with Default Values
     private DiceType diceType;
@@ -43,11 +37,11 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     private final int delayTime = 15;
     private Resources res;
     private HashMap<DiceType, int[]> diceImagesMap;
-    private Drawable dice[];
+    private Drawable[] dice;
     private final Random randomGen = new Random();
     @SuppressWarnings("unused")
     private int diceSum;
-    private int roll[];
+    private int[] roll = new int[9];
     private SparseArray<ImageView> diceImageViewArray;
     private SensorManager sensorMgr;
     private Handler animationHandler;
@@ -133,21 +127,20 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
                 sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),	SensorManager.SENSOR_DELAY_GAME);
         if (!accelSupported) sensorMgr.unregisterListener((SensorEventListener) this); //no accelerometer on the device
         rollDice();
-
-        for (int i = 0; i < roll.length; i++){
-            int rolled = roll[i];
-            ((DiceRollerApplication) getApplicationContext()).addRolledNumberToHistory(rolled + 1);
-        }
     }
 
     private void rollDice() {
         if (paused) return;
-        roll = new int[diceNumber];
         new Thread(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < rollAnimations; i++) {
                     doRoll();
+                }
+
+                for (int i = 0; i < diceNumber; i++){
+                    int rolled = roll[i];
+                    ((DiceRollerApplication) getApplicationContext()).addRolledNumberToHistory(rolled + 1);
                 }
             }
         }).start();
