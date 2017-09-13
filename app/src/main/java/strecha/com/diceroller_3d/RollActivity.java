@@ -38,7 +38,6 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     private int numberOfDiceSites;
     private int diceNumber;
     private Settings settings;
-    private ArrayList<Integer> history;
 
     private final int rollAnimations = 50;
     private final int delayTime = 15;
@@ -105,9 +104,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
 
         diceNumber = ((DiceRollerApplication) getApplicationContext()).getDiceNumber();
         diceType = ((DiceRollerApplication) getApplicationContext()).getDiceType();
-        history = ((DiceRollerApplication) getApplicationContext()).getHistory();
 
-        roll = new int[diceNumber];
         String[] s = diceType.toString().split("D");
         numberOfDiceSites = Integer.parseInt(s[1]);
         dice = new Drawable[numberOfDiceSites];
@@ -136,10 +133,16 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
                 sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),	SensorManager.SENSOR_DELAY_GAME);
         if (!accelSupported) sensorMgr.unregisterListener((SensorEventListener) this); //no accelerometer on the device
         rollDice();
+
+        for (int i = 0; i < roll.length; i++){
+            int rolled = roll[i];
+            ((DiceRollerApplication) getApplicationContext()).addRolledNumberToHistory(rolled + 1);
+        }
     }
 
     private void rollDice() {
         if (paused) return;
+        roll = new int[diceNumber];
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -151,20 +154,8 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
 
         if(settings.isSoundEnabled()) {
             MediaPlayer mp = MediaPlayer.create(this, R.raw.roll);
-            try {
-                mp.prepare();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             mp.start();
         }
-
-        for (int i = 0; i < roll.length; i++){
-            ((DiceRollerApplication) getApplicationContext()).addRolledNumberToHistory(roll[i] + 1);
-        }
-        history = ((DiceRollerApplication) getApplicationContext()).getHistory();
     }
 
     private void doRoll() { // only does a single roll
@@ -177,7 +168,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         synchronized (getLayoutInflater()) {
             animationHandler.sendEmptyMessage(0);
         }
-        try { // delay to alloy for smooth animation
+        try { // delay to allow for smooth animation
             Thread.sleep(delayTime);
         } catch (final InterruptedException e) {
             e.printStackTrace();
