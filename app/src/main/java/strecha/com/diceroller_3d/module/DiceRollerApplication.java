@@ -12,7 +12,7 @@ public class DiceRollerApplication extends Application {
 
     private ArrayList<Integer> history = new ArrayList<>();
     private DiceType diceType = DiceType.D6;
-    private int diceNumber = 1;
+    private int diceNumber = 2;
 
     public int getDiceNumber() {
         return diceNumber;

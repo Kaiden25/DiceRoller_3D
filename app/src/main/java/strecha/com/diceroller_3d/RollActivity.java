@@ -90,9 +90,9 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
             Toast toast = Toast.makeText(this, "Maximum of dices is 9", Toast.LENGTH_SHORT);
             toast.show();
         }
-        else if (((DiceRollerApplication) getApplicationContext()).getDiceNumber() < 1){
-            ((DiceRollerApplication) getApplicationContext()).setDiceNumber(1);
-            Toast toast = Toast.makeText(this, "Minimum of dices is 1", Toast.LENGTH_SHORT);
+        else if (((DiceRollerApplication) getApplicationContext()).getDiceNumber() < 2){
+            ((DiceRollerApplication) getApplicationContext()).setDiceNumber(2);
+            Toast toast = Toast.makeText(this, "Minimum of dices is 2", Toast.LENGTH_SHORT);
             toast.show();
         }
 
@@ -112,7 +112,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         }
 
         for (int i = 0; i < numberOfDiceSites; i++) {
-            dice[i] = res.getDrawable(diceImagesMap.get(diceType)[i]);
+            dice[i] = getDrawable(diceImagesMap.get(diceType)[i]);
         }
 
         animationHandler = new Handler() {
