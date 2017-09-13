@@ -84,8 +84,8 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
             Toast toast = Toast.makeText(this, "Maximum of dices is 9", Toast.LENGTH_SHORT);
             toast.show();
         }
-        else if (((DiceRollerApplication) getApplicationContext()).getDiceNumber() < 1){
-            ((DiceRollerApplication) getApplicationContext()).setDiceNumber(1);
+        else if (((DiceRollerApplication) getApplicationContext()).getDiceNumber() < 2){
+            ((DiceRollerApplication) getApplicationContext()).setDiceNumber(2);
             Toast toast = Toast.makeText(this, "Minimum of dices is 2", Toast.LENGTH_SHORT);
             toast.show();
         }
