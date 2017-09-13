@@ -11,14 +11,11 @@ import strecha.com.diceroller_3d.module.SettingsFileHandler;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    public static final String EXTRA_SETTINGS_SOUND = "strecha.com.diceroller_3d.SettingsActivity.Settings-Sound";
-    public static final String EXTRA_SETTINGS_3D = "strecha.com.diceroller_3d.SettingsActivity.Settings-3D";
-
     private ToggleButton tglButSound;
     private ToggleButton tglBut3d;
 
-    private boolean hasSound;
-    private boolean is3d;
+    private SettingsFileHandler sgh;
+    private Settings settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,21 +25,18 @@ public class SettingsActivity extends AppCompatActivity {
         tglButSound = (ToggleButton) findViewById(R.id.tglButSound);
         tglBut3d = (ToggleButton) findViewById(R.id.tglBut3D);
 
-        Intent intent = getIntent();
+        sgh = new SettingsFileHandler(this);
+        settings = sgh.readSettings();
 
-        hasSound = intent.getBooleanExtra(EXTRA_SETTINGS_SOUND, true);
-        is3d = intent.getBooleanExtra(EXTRA_SETTINGS_3D, false);
-
-        tglButSound.setChecked(hasSound);
-        tglBut3d.setChecked(is3d);
+        tglButSound.setChecked(settings.isSoundEnabled());
+        tglBut3d.setChecked(settings.is3dEnabled());
     }
 
     public void onSaveButtonClick(View view){
 
         assert tglButSound != null && tglBut3d != null;
-        if (tglButSound.isChecked() != hasSound && tglBut3d.isChecked() != is3d) {
+        if (tglButSound.isChecked() != settings.isSoundEnabled() || tglBut3d.isChecked() != settings.is3dEnabled()) {
             Settings settings = new Settings(tglButSound.isChecked(), tglBut3d.isChecked());
-            SettingsFileHandler sgh = new SettingsFileHandler(this);
             sgh.writeSettings(settings);
         }
 

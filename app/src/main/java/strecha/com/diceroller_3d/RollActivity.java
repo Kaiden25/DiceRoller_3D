@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import strecha.com.diceroller_3d.module.DiceRollerApplication;
 import strecha.com.diceroller_3d.module.DiceType;
 import strecha.com.diceroller_3d.module.Settings;
 import strecha.com.diceroller_3d.module.SettingsFileHandler;
@@ -31,12 +32,11 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     //Identifiers for extras in intents
     public static final String EXTRA_DICE_TYPE = "strecha.com.diceroller_3d.RollActivity.DiceType";
     public static final String EXTRA_DICE_NUMBER = "strecha.com.diceroller_3d.RollActivity.DiceNumber";
-    public static final String EXTRA_HISTORY = "strecha.com.diceroller_3d.RollActivity.History";
 
     //diceType and diceNumber initialized with Default Values
-    private DiceType diceType = DiceType.D6;
+    private DiceType diceType;
     private int numberOfDiceSites;
-    private int diceNumber = 1;
+    private int diceNumber;
     private Settings settings;
     private ArrayList<Integer> history;
 
@@ -68,7 +68,6 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roll);
         res = getResources();
-        history = new ArrayList<>();
         diceImageViewArray = new SparseArray<>();
         diceImageViewArray.put(0, (ImageView) findViewById(R.id.die1));
         diceImageViewArray.put(1, (ImageView) findViewById(R.id.die2));
@@ -93,30 +92,20 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         diceImagesMap.put(DiceType.D12, new int[] { R.drawable.d12_1, R.drawable.d12_2, R.drawable.d12_3, R.drawable.d12_4, R.drawable.d12_5, R.drawable.d12_6, R.drawable.d12_7, R.drawable.d12_8, R.drawable.d12_9, R.drawable.d12_10, R.drawable.d12_11, R.drawable.d12_12 });
         diceImagesMap.put(DiceType.D20, new int[] { R.drawable.d20_1, R.drawable.d20_2, R.drawable.d20_3, R.drawable.d20_4, R.drawable.d20_5, R.drawable.d20_6, R.drawable.d20_7, R.drawable.d20_8, R.drawable.d20_9, R.drawable.d20_10, R.drawable.d20_11, R.drawable.d20_12,R.drawable.d20_13, R.drawable.d20_14, R.drawable.d20_15, R.drawable.d20_16, R.drawable.d20_17, R.drawable.d20_18, R.drawable.d20_19, R.drawable.d20_20 });
 
-        // check for intent extra values
-        Intent intent = getIntent();
-
-        if (intent.hasExtra(EXTRA_DICE_TYPE)){
-            String s = intent.getStringExtra(EXTRA_DICE_TYPE);
-            diceType = DiceType.valueOf(s);
+        if (((DiceRollerApplication) getApplicationContext()).getDiceNumber() > 9) {
+            ((DiceRollerApplication) getApplicationContext()).setDiceNumber(9);
+            Toast toast = Toast.makeText(this, "Maximum of dices is 9", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        else if (((DiceRollerApplication) getApplicationContext()).getDiceNumber() < 1){
+            ((DiceRollerApplication) getApplicationContext()).setDiceNumber(1);
+            Toast toast = Toast.makeText(this, "Minimum of dices is 1", Toast.LENGTH_SHORT);
+            toast.show();
         }
 
-        if (intent.hasExtra(EXTRA_DICE_NUMBER)){
-            int nbr = intent.getIntExtra(EXTRA_DICE_NUMBER, 1);
-            if (nbr > 9) {
-                diceNumber = 9;
-                Toast toast = Toast.makeText(this, "Maximum of dices is 9", Toast.LENGTH_SHORT);
-                toast.show();
-            }
-            else if (nbr < 0){
-                diceNumber = 1;
-                Toast toast = Toast.makeText(this, "Minimum of dices is 0", Toast.LENGTH_SHORT);
-                toast.show();
-            }
-            else{
-                diceNumber = nbr;
-            }
-        }
+        diceNumber = ((DiceRollerApplication) getApplicationContext()).getDiceNumber();
+        diceType = ((DiceRollerApplication) getApplicationContext()).getDiceType();
+        history = ((DiceRollerApplication) getApplicationContext()).getHistory();
 
         roll = new int[diceNumber];
         String[] s = diceType.toString().split("D");
@@ -159,19 +148,23 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
                 }
             }
         }).start();
-        MediaPlayer mp = MediaPlayer.create(this, R.raw.roll);
-        try {
-            mp.prepare();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        if(settings.isSoundEnabled()) {
+            MediaPlayer mp = MediaPlayer.create(this, R.raw.roll);
+            try {
+                mp.prepare();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mp.start();
         }
-        mp.start();
 
         for (int i = 0; i < roll.length; i++){
-            history.add(roll[i]);
+            ((DiceRollerApplication) getApplicationContext()).addRolledNumberToHistory(roll[i] + 1);
         }
+        history = ((DiceRollerApplication) getApplicationContext()).getHistory();
     }
 
     private void doRoll() { // only does a single roll
@@ -237,12 +230,9 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         }
         else if (v.getId() == R.id.butSettings){
             intent = new Intent(this, SettingsActivity.class);
-            intent.putExtra(SettingsActivity.EXTRA_SETTINGS_SOUND, settings.isSoundEnabled());
-            intent.putExtra(SettingsActivity.EXTRA_SETTINGS_3D, settings.is3dEnabled());
         }
         else if (v.getId() == R.id.butHistory){
             intent = new Intent(this, HistoryActivity.class);
-            intent.putExtra(EXTRA_HISTORY, history);
         }
 
         if (intent != null) {

@@ -1,12 +1,13 @@
 package strecha.com.diceroller_3d;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.GridLayout;
 
 import java.util.ArrayList;
+
+import strecha.com.diceroller_3d.module.DiceRollerApplication;
 
 public class HistoryActivity extends AppCompatActivity {
 
@@ -15,8 +16,7 @@ public class HistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        Intent intent = getIntent();
-        ArrayList<Integer> history = intent.getIntegerArrayListExtra(RollActivity.EXTRA_HISTORY);
+        ArrayList<Integer> history = ((DiceRollerApplication) getApplicationContext()).getHistory();
         GridLayout historyGrid = (GridLayout) findViewById(R.id.historyGrid);
 
         for (Integer i: history){

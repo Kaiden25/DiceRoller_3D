@@ -11,9 +11,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Objects;
 
+import strecha.com.diceroller_3d.module.DiceRollerApplication;
 import strecha.com.diceroller_3d.module.DiceType;
 
 public class SelectionActivity extends AppCompatActivity {
@@ -71,8 +73,9 @@ public class SelectionActivity extends AppCompatActivity {
                 ){
                     if (!v.getText().toString().equals("")) {
                         numberOfDices = Integer.valueOf(v.getText().toString());
-                        intent.putExtra(RollActivity.EXTRA_DICE_TYPE, diceType);
-                        intent.putExtra(RollActivity.EXTRA_DICE_NUMBER, numberOfDices);
+                        ((DiceRollerApplication) getApplicationContext()).setDiceType(DiceType.valueOf(diceType));
+                        ((DiceRollerApplication) getApplicationContext()).setDiceNumber(numberOfDices);
+
                         startActivity(intent);
                         return true;
                     }
