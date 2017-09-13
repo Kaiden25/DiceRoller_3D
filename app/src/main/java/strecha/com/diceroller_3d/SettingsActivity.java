@@ -1,8 +1,8 @@
 package strecha.com.diceroller_3d;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ToggleButton;
 
@@ -24,6 +24,12 @@ public class SettingsActivity extends AppCompatActivity {
 
         tglButSound = (ToggleButton) findViewById(R.id.tglButSound);
         tglBut3d = (ToggleButton) findViewById(R.id.tglBut3D);
+        assert tglButSound != null;
+        assert tglBut3d != null;
+
+        // 3D option not available
+        tglBut3d.setEnabled(false);
+        tglBut3d.setHint("3D isn't available yet");
 
         sgh = new SettingsFileHandler(this);
         settings = sgh.readSettings();

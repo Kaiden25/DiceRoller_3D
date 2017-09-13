@@ -22,11 +22,4 @@ public class Settings {
         return isSoundEnabled;
     }
 
-    public void setIs3dEnabled(boolean is3dEnabled) {
-        this.is3dEnabled = is3dEnabled;
-    }
-
-    public void setSoundEnabled(boolean soundEnabled) {
-        isSoundEnabled = soundEnabled;
-    }
 }

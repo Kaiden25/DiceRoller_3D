@@ -1,7 +1,6 @@
 package strecha.com.diceroller_3d;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,8 +8,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.View;
@@ -27,24 +24,18 @@ import strecha.com.diceroller_3d.module.SettingsFileHandler;
 
 public class RollActivity extends AppCompatActivity implements SensorEventListener {
 
-    //diceType and diceNumber initialized with Default Values
     private DiceType diceType;
     private int numberOfDiceSites;
     private int diceNumber;
     private Settings settings;
-
     private final int rollAnimations = 50;
     private final int delayTime = 15;
-    private Resources res;
     private HashMap<DiceType, int[]> diceImagesMap;
     private Drawable[] dice;
     private final Random randomGen = new Random();
-    @SuppressWarnings("unused")
-    private int diceSum;
     private int[] roll = new int[9];
     private SparseArray<ImageView> diceImageViewArray;
     private SensorManager sensorMgr;
-    private Handler animationHandler;
     private long lastUpdate = -1;
     private float x, y, z;
     private float last_x, last_y, last_z;
@@ -53,14 +44,14 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
     private static final double SHAKE_THRESHOLD = 5000;
 
     /** Called when the activity is first created. */
-    //TODO: store important variables not in activity(search for application storage)
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         paused = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roll);
-        res = getResources();
+
+        // create list with all imageViews for the dices
         diceImageViewArray = new SparseArray<>();
         diceImageViewArray.put(0, (ImageView) findViewById(R.id.die1));
         diceImageViewArray.put(1, (ImageView) findViewById(R.id.die2));
@@ -72,10 +63,12 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         diceImageViewArray.put(7, (ImageView) findViewById(R.id.die8));
         diceImageViewArray.put(8, (ImageView) findViewById(R.id.die9));
 
+        // set all images of imageViews to null
         for (int i = 0; i < diceImageViewArray.size(); i++){
             diceImageViewArray.get(i).setImageDrawable(null);
         }
 
+        // diceImagesMap contains int-arrays for all diceTypes
         diceImagesMap = new HashMap<>();
         diceImagesMap.put(DiceType.D2, new int[] { R.drawable.d2_1, R.drawable.d2_2 });
         diceImagesMap.put(DiceType.D4, new int[] { R.drawable.d4_1, R.drawable.d4_2, R.drawable.d4_3, R.drawable.d4_4 });
@@ -85,13 +78,14 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         diceImagesMap.put(DiceType.D12, new int[] { R.drawable.d12_1, R.drawable.d12_2, R.drawable.d12_3, R.drawable.d12_4, R.drawable.d12_5, R.drawable.d12_6, R.drawable.d12_7, R.drawable.d12_8, R.drawable.d12_9, R.drawable.d12_10, R.drawable.d12_11, R.drawable.d12_12 });
         diceImagesMap.put(DiceType.D20, new int[] { R.drawable.d20_1, R.drawable.d20_2, R.drawable.d20_3, R.drawable.d20_4, R.drawable.d20_5, R.drawable.d20_6, R.drawable.d20_7, R.drawable.d20_8, R.drawable.d20_9, R.drawable.d20_10, R.drawable.d20_11, R.drawable.d20_12,R.drawable.d20_13, R.drawable.d20_14, R.drawable.d20_15, R.drawable.d20_16, R.drawable.d20_17, R.drawable.d20_18, R.drawable.d20_19, R.drawable.d20_20 });
 
+        // check of diceNumber values (min: 1, max:9)
         if (((DiceRollerApplication) getApplicationContext()).getDiceNumber() > 9) {
             ((DiceRollerApplication) getApplicationContext()).setDiceNumber(9);
             Toast toast = Toast.makeText(this, "Maximum of dices is 9", Toast.LENGTH_SHORT);
             toast.show();
         }
-        else if (((DiceRollerApplication) getApplicationContext()).getDiceNumber() < 2){
-            ((DiceRollerApplication) getApplicationContext()).setDiceNumber(2);
+        else if (((DiceRollerApplication) getApplicationContext()).getDiceNumber() < 1){
+            ((DiceRollerApplication) getApplicationContext()).setDiceNumber(1);
             Toast toast = Toast.makeText(this, "Minimum of dices is 2", Toast.LENGTH_SHORT);
             toast.show();
         }
@@ -103,6 +97,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         numberOfDiceSites = Integer.parseInt(s[1]);
         dice = new Drawable[numberOfDiceSites];
 
+        // reads or creates (if not available) settings file
         SettingsFileHandler sfh = new SettingsFileHandler(this);
         if (sfh.hasSettingsFile()){
             settings = sfh.readSettings();
@@ -115,13 +110,6 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
             dice[i] = getDrawable(diceImagesMap.get(diceType)[i]);
         }
 
-        animationHandler = new Handler() {
-            public void handleMessage(Message msg) {
-                for (int i = 0; i < diceNumber; i++){
-                    diceImageViewArray.get(i).setImageDrawable(dice[roll[i]]);
-                }
-            }
-        };
         sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
         boolean accelSupported = sensorMgr.registerListener((SensorEventListener) this,
                 sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),	SensorManager.SENSOR_DELAY_GAME);
@@ -129,6 +117,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         rollDice();
     }
 
+    // rolls all dices
     private void rollDice() {
         if (paused) return;
         new Thread(new Runnable() {
@@ -138,6 +127,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
                     doRoll();
                 }
 
+                // add rolled numbers to history
                 for (int i = 0; i < diceNumber; i++){
                     int rolled = roll[i];
                     ((DiceRollerApplication) getApplicationContext()).addRolledNumberToHistory(rolled + 1);
@@ -145,6 +135,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
             }
         }).start();
 
+        // plays sound if enabled
         if(settings.isSoundEnabled()) {
             MediaPlayer mp = MediaPlayer.create(this, R.raw.roll);
             mp.start();
@@ -157,9 +148,19 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
             roll[i] = randomGen.nextInt(numberOfDiceSites);
         }
 
-        //diceSum = roll[0] + roll[1] + 2; // 2 is added because the values of the rolls start with 0 not 1
         synchronized (getLayoutInflater()) {
-            animationHandler.sendEmptyMessage(0);
+
+            for (int i = 0; i < diceNumber; i++){
+                final ImageView imageView = diceImageViewArray.get(i);
+                final Drawable drawable = dice[roll[i]];
+
+                // sets image of rolled number to imageView
+                imageView.post(new Runnable() {
+                    public void run() {
+                        imageView.setImageDrawable(drawable);
+                    }
+                });
+            }
         }
         try { // delay to allow for smooth animation
             Thread.sleep(delayTime);
@@ -178,10 +179,9 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         paused = true;
     }
 
+    // triggers roll on recorded sensor changes
     @Override
     public void onSensorChanged(SensorEvent event) {
-        //sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
-        //Sensor mySensor = sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             long curTime = System.currentTimeMillis();
             if ((curTime - lastUpdate) > UPDATE_DELAY) {
@@ -201,6 +201,7 @@ public class RollActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    // not needed, only for implement SensorEventListener
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 

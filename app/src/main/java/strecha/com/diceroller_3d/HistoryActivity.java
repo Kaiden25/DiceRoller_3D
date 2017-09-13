@@ -17,11 +17,13 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
 
         ArrayList<Integer> history = ((DiceRollerApplication) getApplicationContext()).getHistory();
-        GridLayout historyGrid = (GridLayout) findViewById(R.id.historyGrid);
 
+        // adds roll history to grid
+        GridLayout historyGrid = (GridLayout) findViewById(R.id.historyGrid);
         for (Integer i: history){
             Button b = new Button(this);
             b.setText(String.valueOf(i));
+            b.setClickable(false);
             assert historyGrid != null;
             historyGrid.addView(b);
         }

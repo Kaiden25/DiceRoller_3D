@@ -2,13 +2,10 @@ package strecha.com.diceroller_3d.module;
 
 import android.content.Context;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
@@ -17,13 +14,14 @@ import java.util.Properties;
 
 public class SettingsFileHandler {
 
+    private static final String SETTING_SOUND = "isSoundEnabled";
+    private static final String SETTINGS_3D = "is3dEnabled";
     private static final String FILEPATH = "/diceRoller_3d.properties";
+
     private Settings defaultSettings;
-    private Context context;
     private File configProperties;
 
     public SettingsFileHandler(Context context){
-        this.context = context;
         configProperties = new File(context.getFilesDir(), FILEPATH);
         defaultSettings = new Settings(true, false);
     }
@@ -32,20 +30,14 @@ public class SettingsFileHandler {
         return configProperties.exists();
     }
 
+    //read config.properties file, if exception -> return defaultSettings
     public Settings readSettings(){
         try {
             FileInputStream fis = new FileInputStream(configProperties);
-            /*InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }*/
             Properties prop = new Properties();
             prop.load(fis);
-            String isSoundEnabled = prop.getProperty("isSoundEnabled");
-            String is3dEnabled = prop.getProperty("is3dEnabled");
+            String isSoundEnabled = prop.getProperty(SETTING_SOUND);
+            String is3dEnabled = prop.getProperty(SETTINGS_3D);
             return new Settings(Boolean.parseBoolean(isSoundEnabled), Boolean.parseBoolean(is3dEnabled));
         }
         catch (IOException ex){
@@ -58,8 +50,8 @@ public class SettingsFileHandler {
         try {
             FileOutputStream fos = new FileOutputStream(configProperties);
             Properties prop = new Properties();
-            prop.setProperty("isSoundEnabled", String.valueOf(settings.isSoundEnabled()));
-            prop.setProperty("is3dEnabled", String.valueOf(settings.is3dEnabled()));
+            prop.setProperty(SETTING_SOUND, String.valueOf(settings.isSoundEnabled()));
+            prop.setProperty(SETTINGS_3D, String.valueOf(settings.is3dEnabled()));
             prop.store(fos, "");
         }
         catch (IOException ex){
